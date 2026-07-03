@@ -4,3 +4,8 @@ node_modules
 # Environment
 .env
 
+# Prisma generated files
+/generated/prisma
+
+# compiled outputs
+/data/*

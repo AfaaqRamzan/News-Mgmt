@@ -1,0 +1,22 @@
+services:
+  postgresql:
+    image: postgres:15-alpine
+    volumes:
+      - ./data/postgresql:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=news_mgmt
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
+  redis:
+    image: redis:alpine
+    ports:
+      - 6379:6379
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
