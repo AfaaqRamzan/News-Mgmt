@@ -1,13 +1,14 @@
 {
   "name": "news-mgmt",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "index.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "swagger-autogen": "node ./swagger.js",
-    "start": "npm run swagger-autogen && node server.js",
+    "start": "npm run swagger-autogen && tsx server.js",
     "nodemon": "nodemon --exec tsx server.js",
+    "dev": "npm run start && npm run nodemon",
     "db:generate": "prisma generate",
     "postinstall": "prisma generate"
   },
