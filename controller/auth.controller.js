@@ -1,5 +1,5 @@
 import vine, { errors } from "@vinejs/vine";
-import { registerSchema } from "../validations/auth.validation.js";
+import { loginSchema, registerSchema } from "../validations/auth.validation.js";
 import bcrypt from "bcryptjs";
 import { prisma } from "../DB/db.config.js";
 
@@ -78,6 +78,84 @@ class AuthController {
       return res
         .status(201)
         .json({ message: "User created successfully", newUser });
+    } catch (error) {
+      console.log("The error is", error);
+      if (error instanceof errors.E_VALIDATION_ERROR) {
+        // * 400 Bad Request
+        return res.status(400).json({ errors: error.messages });
+      }
+      return res
+        .status(500)
+        .json({ message: "Internal server error. Please try again later." });
+    }
+  }
+
+  static async login(req, res) {
+    /*  #swagger.tags = ['Auth']
+            #swagger.summary = 'Login a user'
+            #swagger.description = 'Logs in a user after validating the email and password.'
+            #swagger.parameters['body'] = {
+                in: 'body',
+                description: 'User login info',
+                required: true,
+                schema: {
+                    email: 'johndoe@example.com',
+                    password: 'password123'
+                }
+            }
+            #swagger.responses[201] = {
+                description: 'User login successfully',
+                schema: {
+                    message: 'User logged in successfully',
+                    user: {
+                        id: 'a1b2c3d4-e5f6-7a8b-9c0d-e1f2a3b4c5d6',
+                        name: 'John Doe',
+                        email: 'johndoe@example.com',
+                        createdAt: '2026-07-16T12:00:00.000Z',
+                        updatedAt: '2026-07-16T12:00:00.000Z'
+                    }
+                }
+            }
+            #swagger.responses[400] = {
+                description: 'Email not registered. Please register first. or Invalid email or password.',
+                schema: {
+                    message: 'Email not registered. Please register first. or Invalid email or password.'
+                }
+            }
+            #swagger.responses[500] = {
+                description: 'Internal server error'
+            }
+        */
+    try {
+      const body = req.body;
+      const validator = vine.create(loginSchema);
+      const payload = await validator.validate(body);
+
+      // * Check if the email is not in use
+      const existingUser = await prisma.user.findUnique({
+        where: { email: payload.email },
+      });
+      if (!existingUser) {
+        return res.status(400).json({
+          errors: "Email is not registered. Please register first.",
+        });
+      }
+
+      // * Compare the password
+      const isPasswordValid = bcrypt.compareSync(
+        payload.password,
+        existingUser.password,
+      );
+      if (!isPasswordValid) {
+        return res.status(400).json({
+          errors: "Invalid email or password. Please try again.",
+        });
+      }
+
+      // * Send the JWT Token to the user
+      return res
+        .status(200)
+        .json({ message: "Login successful", user: existingUser });
     } catch (error) {
       console.log("The error is", error);
       if (error instanceof errors.E_VALIDATION_ERROR) {
