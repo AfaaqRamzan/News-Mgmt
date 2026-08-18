@@ -1,22 +1,52 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "Automated Node.js API (ESM)",
+    "title": "News Management System",
     "description": "API documentation generated automatically by swagger-autogen",
-    "version": "1.0.0"
+    "version": "2.0.0"
   },
   "host": "localhost:3000",
   "basePath": "/",
   "schemes": [
     "http"
   ],
+  "securityDefinitions": {
+    "bearerAuth": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
   "paths": {
     "/": {
       "get": {
-        "description": "",
+        "tags": [
+          "Health Check"
+        ],
+        "summary": "Get Health Check",
+        "description": "Returns the health status of the server.",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Health check successful",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "number",
+                  "example": 200
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Health check successful"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       }
@@ -175,6 +205,84 @@
             "description": "Internal server error"
           }
         }
+      }
+    },
+    "/api/profile": {
+      "get": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Get logged in user profile",
+        "description": "Returns the profile information of the currently authenticated user.",
+        "responses": {
+          "200": {
+            "description": "User profile fetched successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "number",
+                  "example": 200
+                },
+                "user": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "a1b2c3d4-e5f6-7a8b-9c0d-e1f2a3b4c5d6"
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "John Doe"
+                    },
+                    "email": {
+                      "type": "string",
+                      "example": "johndoe@example.com"
+                    },
+                    "profile": {
+                      "type": "string",
+                      "example": "user.jpg"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "example": "2026-07-16T12:00:00.000Z"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "example": "2026-07-16T12:00:00.000Z"
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Unauthorized. Please login."
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     }
   }

@@ -3,8 +3,8 @@ import "dotenv/config"
 
 import apiRoutes from "./routes/api.js";
 
-import swaggerUi from 'swagger-ui-express';
-import { createRequire } from 'module';
+import swaggerUi from "swagger-ui-express";
+import { createRequire } from "module";
 
 // Initialize require to safely load the JSON schema file
 const require = createRequire(import.meta.url);
@@ -17,15 +17,30 @@ const port = process.env.PORT || 8000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-
-
-app.get('/', (req, res) => {
-  res.send('Hello World!, Heroku!');
+// * Health Check
+app.get("/", (req, res) => {
+  /*  #swagger.tags = ['Health Check']
+            #swagger.summary = 'Get Health Check' 
+            #swagger.description = 'Returns the health status of the server.'
+            #swagger.responses[200] = {
+                description: 'Health check successful',
+                schema: {
+                    status: 200,
+                    message: 'Health check successful'
+                }
+            }
+            #swagger.responses[500] = {
+                description: 'Internal server error'
+            }
+            */
+  res.status(200).json({
+    status: 200,
+    message: "Server is running successfully!!!!",
+  });
 });
 
 // * Routes
 app.use("/api", apiRoutes);
-
 
 // * Serve the interactive Swagger UI
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));

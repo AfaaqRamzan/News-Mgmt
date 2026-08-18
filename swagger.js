@@ -1,16 +1,22 @@
-import swaggerAutogen from 'swagger-autogen';
+import swaggerAutogen from "swagger-autogen";
 
 const doc = {
   info: {
-    title: 'Automated Node.js API (ESM)',
-    description: 'API documentation generated automatically by swagger-autogen',
-    version: '1.0.0',
+    title: "News Management System",
+    description: "API documentation generated automatically by swagger-autogen",
+    version: "2.0.0",
   },
-  host: 'localhost:3000',
-  schemes: ['http'],
+  host: "localhost:3000",
+  securityDefinitions: {
+    bearerAuth: {
+      type: "apiKey",
+      name: "Authorization",
+      in: "header",
+    },
+  },
 };
 
-const outputFile = './swagger-output.json';
-const routes = ['./server.js']; // Points to your new ESM server file
+const outputFile = "./swagger-output.json";
+const routes = ["./server.js"]; // Points to your new ESM server file
 
 swaggerAutogen()(outputFile, routes, doc);

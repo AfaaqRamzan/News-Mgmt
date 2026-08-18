@@ -144,12 +144,12 @@ class AuthController {
       const token = jwt.sign({ id: findUser.id }, process.env.JWT_SECRET, {
         expiresIn: "1h",
       });
-      res.cookie("token", token, {
+      /* res.cookie("token", token, {
         httpOnly: true,
         secure: true,
         sameSite: "strict",
         maxAge: 24 * 60 * 60 * 1000,
-      });
+      }); */
       return res.status(200).json({
         message: "Login successful",
         access_token: `Bearer ${token}`,
