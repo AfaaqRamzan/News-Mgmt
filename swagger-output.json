@@ -156,54 +156,14 @@
           "200": {
             "description": "OK"
           },
-          "201": {
-            "description": "User login successfully",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "message": {
-                  "type": "string",
-                  "example": "User logged in successfully"
-                },
-                "user": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string",
-                      "example": "a1b2c3d4-e5f6-7a8b-9c0d-e1f2a3b4c5d6"
-                    },
-                    "name": {
-                      "type": "string",
-                      "example": "John Doe"
-                    },
-                    "email": {
-                      "type": "string",
-                      "example": "johndoe@example.com"
-                    },
-                    "createdAt": {
-                      "type": "string",
-                      "example": "2026-07-16T12:00:00.000Z"
-                    },
-                    "updatedAt": {
-                      "type": "string",
-                      "example": "2026-07-16T12:00:00.000Z"
-                    }
-                  }
-                }
-              },
-              "xml": {
-                "name": "main"
-              }
-            }
-          },
           "400": {
-            "description": "Email not registered. Please register first. or Invalid email or password.",
+            "description": "Invalid Credentials",
             "schema": {
               "type": "object",
               "properties": {
                 "message": {
                   "type": "string",
-                  "example": "Email not registered. Please register first. or Invalid email or password."
+                  "example": "Invalid Credentials"
                 }
               },
               "xml": {
