@@ -5,6 +5,7 @@ import apiRoutes from "./routes/api.js";
 
 import swaggerUi from "swagger-ui-express";
 import { createRequire } from "module";
+import fileUpload from "express-fileupload";
 
 // Initialize require to safely load the JSON schema file
 const require = createRequire(import.meta.url);
@@ -16,6 +17,7 @@ const port = process.env.PORT || 8000;
 // * Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(fileUpload());
 
 // * Health Check
 app.get("/", (req, res) => {

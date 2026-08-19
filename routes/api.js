@@ -11,5 +11,6 @@ router.post("/auth/login", AuthController.login);
 
 // * Profile Routes : Private Routes
 router.get("/profile", authMiddleware, ProfileController.index);
+router.put("/profile/:id", authMiddleware, ProfileController.update);
 
 export default router;

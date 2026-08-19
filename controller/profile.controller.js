@@ -3,6 +3,12 @@
 // in store we inserting the data in user table
 // in show we fetching the data from user table by id
 // in update we updating the data in user table by id
+
+import { prisma } from "../DB/db.config";
+import { generateRandomNum, imageValidator } from "../utils/helper";
+import fs from "fs";
+import path from "path";
+
 // in destroy we deleting the data from user table by id
 class ProfileController {
   // * Get the data
@@ -84,7 +90,111 @@ class ProfileController {
   static async show() {}
 
   //   * Update the user profile
-  static async update() {}
+  static async update(req, res) {
+    /*  #swagger.tags = ['Profile']
+          #swagger.summary = 'Update user profile'
+          #swagger.description = 'Updates the user profile.'
+          #swagger.consumes = ['multipart/form-data']
+          #swagger.security = [{ "bearerAuth": [] }]
+
+          #swagger.parameters['id'] = {
+            in: 'path',
+            description: 'User profile ID',
+            required: true,
+            type: 'string'
+          }
+
+          #swagger.parameters['profile'] = {
+            in: 'formData',
+            type: 'file',
+            required: true,
+            description: 'Profile image file (PNG, JPG, etc.)'
+          }
+
+          #swagger.responses[200] = {
+              description: 'Profile updated successfully',
+              schema: {
+                status: 200,
+                message: 'Profile updated successfully!'
+              }
+          }
+          #swagger.responses[400] = {
+            description: 'Invalid profile image',
+            schema: {
+                status: 400,
+                message: 'Profile image is required.'
+            }
+          }
+          #swagger.responses[500] = {
+            description: 'Internal server error',
+            schema: {
+              status: 500,
+              message: 'Something went wrong.please try again!'
+            }
+          }
+        */
+
+    try {
+      const { id } = req.params;
+
+      if (!id) {
+        return res
+          .status(400)
+          .json({ status: 400, message: "Profile ID is required." });
+      }
+      if (!req.files || Object.keys(req.files).length === 0) {
+        return res
+          .status(400)
+          .json({ status: 400, message: "Profile image is required." });
+      }
+
+      const profile = req.files.profile;
+      const message = imageValidator(profile?.size, profile.mimetype);
+      if (message !== null) {
+        return res.status(400).json({
+          errors: {
+            profile: message,
+          },
+        });
+      }
+
+      const imgExt = profile?.name.split(".");
+      const imageName = generateRandomNum() + "." + imgExt[1];
+      const uploadPath = process.cwd() + "/public/images/" + imageName;
+
+      // * Get the directory path (e.g. 'D:/Projects/news-mgmt/public/images')
+      const dir = path.dirname(uploadPath);
+
+      // * Create the folder if it does not exist (recursive: true creates parent folders too)
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+
+      // * Move the file
+      profile.mv(uploadPath, (err) => {
+        if (err) throw err;
+      });
+
+      await prisma.user.update({
+        where: {
+          id: id,
+        },
+        data: {
+          profile: imageName,
+        },
+      });
+
+      return res.json({
+        status: 200,
+        message: "Profile updated successfully!",
+      });
+    } catch (error) {
+      console.log("The error is", error);
+      return res.status(500).json({
+        message: "Something went wrong.please try again!",
+      });
+    }
+  }
 
   //   * Delete the user profile
   static async destroy() {}

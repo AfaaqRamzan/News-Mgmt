@@ -284,6 +284,98 @@
           }
         ]
       }
+    },
+    "/api/profile/{id}": {
+      "put": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Update user profile",
+        "description": "Updates the user profile.",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "User profile ID"
+          },
+          {
+            "name": "profile",
+            "in": "formData",
+            "type": "file",
+            "required": true,
+            "description": "Profile image file (PNG, JPG, etc.)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Profile   successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "number",
+                  "example": 200
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Profile updated successfully!"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid profile image",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "number",
+                  "example": 400
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Profile image is required."
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "number",
+                  "example": 500
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Something went wrong.please try again!"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
     }
   }
 }

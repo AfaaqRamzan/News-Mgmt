@@ -10,3 +10,4 @@ node_modules
 
 # compiled outputs
 /data/*
+/public/images/*
