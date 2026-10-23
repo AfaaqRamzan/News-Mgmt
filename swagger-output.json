@@ -535,20 +535,98 @@
         }
       },
       "put": {
-        "description": "",
+        "tags": [
+          "News"
+        ],
+        "summary": "Update news by ID",
+        "description": "Update the news information.",
+        "consumes": [
+          "multipart/form-data"
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "Update news ID"
+          },
+          {
+            "name": "title",
+            "in": "formData",
+            "type": "string",
+            "required": true,
+            "description": "Update news title"
+          },
+          {
+            "name": "content",
+            "in": "formData",
+            "type": "string",
+            "required": true,
+            "description": "Update news content"
+          },
+          {
+            "name": "image",
+            "in": "formData",
+            "type": "file",
+            "description": "Update news image"
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "News   successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "number",
+                  "example": 200
+                },
+                "message": {
+                  "type": "string",
+                  "example": "News updated successfully!"
+                },
+                "news": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string",
+                      "example": "News Title"
+                    },
+                    "content": {
+                      "type": "string",
+                      "example": "News content"
+                    },
+                    "image": {
+                      "type": "string",
+                      "example": "image.jpg"
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "News not found"
+          },
+          "422": {
+            "description": "Validation error | Invalid image format. Only PNG, JPG, and JPEG are allowed | Image size must be less than 2 MB"
+          },
+          "500": {
+            "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       },
       "delete": {
         "description": "",

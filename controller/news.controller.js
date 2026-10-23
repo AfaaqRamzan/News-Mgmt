@@ -1,6 +1,6 @@
 import vine, { errors } from "@vinejs/vine";
 import { newsSchema } from "../validations/news.validation.js";
-import { imageValidator, uploadImage } from "../utils/helper.js";
+import { imageValidator, removeImage, uploadImage } from "../utils/helper.js";
 import { prisma } from "../DB/db.config.js";
 import NewsTransform from "../transform/news.transform.js";
 
@@ -226,7 +226,115 @@ class NewsController {
     }
   }
 
-  static async update(req, res) {}
+  static async update(req, res) {
+    /*  #swagger.tags = ['News']
+            #swagger.summary = 'Update news by ID'
+            #swagger.description = 'Update the news information.'
+            #swagger.consumes = ['multipart/form-data']
+            #swagger.security = [{ "bearerAuth": [] }]
+
+            #swagger.parameters['id'] = {
+                in: 'path',
+                type: 'string',
+                required: true,
+                description: 'Update news ID'
+            }
+            #swagger.parameters['title'] = {
+                in: 'formData',
+                type: 'string',
+                required: true,
+                description: 'Update news title'
+            }
+
+            #swagger.parameters['content'] = {
+                in: 'formData',
+                type: 'string',
+                required: true,
+                description: 'Update news content'
+            }
+
+            #swagger.parameters['image'] = {
+                in: 'formData',
+                type: 'file',
+                description: 'Update news image'
+            }
+
+            #swagger.responses[200] = {
+                description: 'News updated successfully',
+                schema: {
+                    status: 200,
+                    message:"News updated successfully!",
+                    news:{
+                      title: 'News Title',
+                      content: 'News content',
+                      image: 'image.jpg',
+                    }
+                }
+            }
+            #swagger.responses[401] = {
+                description: 'Unauthorized'
+            }
+            #swagger.responses[422] = {
+                description: 'Validation error | Invalid image format. Only PNG, JPG, and JPEG are allowed | Image size must be less than 2 MB'
+            }
+            #swagger.responses[404] = {
+                description: 'News not found'
+            }
+            #swagger.responses[500] = {
+                description: 'Internal server error'
+            }
+        */
+    try {
+      const { id } = req.params;
+      const user = req.user;
+      const body = req.body;
+      const news = await prisma.news.findUnique({
+        where: {
+          id,
+        },
+      });
+      if (user.id !== news.author_id) {
+        return res.status(401).json({ message: "UnAuthorized" });
+      }
+      const validator = vine.create(newsSchema);
+      const payload = await validator.validate(body);
+      const image = req?.files?.image;
+
+      if (image) {
+        const message = imageValidator(image?.size, image?.mimetype);
+        if (message !== null) {
+          return res.status(422).json({
+            errors: {
+              image: message,
+            },
+          });
+        }
+
+        //   * Upload new image
+        const imageName = await uploadImage(image);
+        payload.image = imageName;
+        // * Delete old image
+        removeImage(news.image);
+      }
+
+      await prisma.news.update({
+        data: payload,
+        where: {
+          id,
+        },
+      });
+
+      return res.status(200).json({ message: "News updated successfully!" });
+    } catch (error) {
+      if (error instanceof errors.E_VALIDATION_ERROR) {
+        return res.status(422).json({ errors: error.messages });
+      } else {
+        return res
+          .status(500)
+          .json({ message: "Something went wrong.please try again." });
+      }
+    }
+  }
 
   static async destroy(req, res) {}
 }
