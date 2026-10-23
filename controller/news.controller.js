@@ -171,7 +171,60 @@ class NewsController {
     }
   }
 
-  static async show(req, res) {}
+  static async show(req, res) {
+    /*  #swagger.tags = ['News']
+            #swagger.summary = 'Show news by ID'
+            #swagger.description = 'Returns the news information of the specified news by ID.'
+            #swagger.parameters['id'] = {
+                in: 'path',
+                type: 'string',
+                required: true,
+                description: 'News ID'
+            }
+            #swagger.responses[200] = {
+                description: 'News fetched successfully',
+            }
+            #swagger.responses[404] = {
+                description: 'News not found'
+            }
+            #swagger.responses[408] = {
+                description: 'Request Timeout'
+            }
+            #swagger.responses[500] = {
+                description: 'Internal server error'
+            }
+        */
+    try {
+      const { id } = req.params;
+      const news = await prisma.news.findUnique({
+        where: {
+          id,
+        },
+        include: {
+          author: {
+            select: {
+              id: true,
+              name: true,
+              profile: true,
+            },
+          },
+        },
+      });
+      if (!news) {
+        return res.status(404).json({ message: "News not found!" });
+      }
+      const transFormNews = NewsTransform.transform(news);
+      return res.status(200).json({ news: transFormNews });
+    } catch (error) {
+      if (error instanceof errors.E_VALIDATION_ERROR) {
+        return res.status(422).json({ errors: error.messages });
+      } else {
+        return res
+          .status(500)
+          .json({ message: "Somrthing went wrong.please try again." });
+      }
+    }
+  }
 
   static async update(req, res) {}
 

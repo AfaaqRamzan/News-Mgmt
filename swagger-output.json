@@ -502,18 +502,35 @@
     },
     "/api/news/{id}": {
       "get": {
-        "description": "",
+        "tags": [
+          "News"
+        ],
+        "summary": "Show news by ID",
+        "description": "Returns the news information of the specified news by ID.",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "News ID"
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "News fetched successfully"
+          },
+          "404": {
+            "description": "News not found"
+          },
+          "408": {
+            "description": "Request Timeout"
+          },
+          "422": {
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       },
