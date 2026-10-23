@@ -21,8 +21,8 @@ class NewsController {
     */
 
     // OffSet Pagination
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 10;
+    let page = Number(req.query.page) || 1;
+    let limit = Number(req.query.limit) || 10;
 
     if (page <= 0 || !page) {
       page = 1;
@@ -293,6 +293,10 @@ class NewsController {
           id,
         },
       });
+      if (!news) {
+        return res.status(404).json({ message: "News not found!" });
+      }
+      // * Check if the user is the author of the news
       if (user.id !== news.author_id) {
         return res.status(401).json({ message: "UnAuthorized" });
       }
@@ -336,7 +340,63 @@ class NewsController {
     }
   }
 
-  static async destroy(req, res) {}
+  static async destroy(req, res) {
+    /*  #swagger.tags = ['News']
+            #swagger.summary = 'Delete news by ID'
+            #swagger.description = 'Delete the news by ID.'
+            #swagger.consumes = ['multipart/form-data']
+            #swagger.security = [{ "bearerAuth": [] }]
+
+            #swagger.parameters['id'] = {
+                in: 'path',
+                type: 'string',
+                required: true,
+                description: 'Delete news ID'
+            }
+            #swagger.responses[200] = {
+                description: 'News deleted successfully',
+            }
+            #swagger.responses[401] = {
+                description: 'Unauthorized'
+            }
+            #swagger.responses[404] = {
+                description: 'News not found'
+            }
+            #swagger.responses[500] = {
+                description: 'Internal server error'
+            }
+        */
+    try {
+      const { id } = req.params;
+      const user = req.user;
+      const news = await prisma.news.findUnique({
+        where: {
+          id,
+        },
+      });
+      if (!news) {
+        return res.status(404).json({ message: "News not found!" });
+      }
+      // * Check if the user is the author of the news
+      if (user.id !== news.author_id) {
+        return res.status(401).json({ message: "UnAuthorized" });
+      }
+
+      // * Delete image from filesystem
+      removeImage(news.image);
+      await prisma.news.delete({
+        where: {
+          id,
+        },
+      });
+      return res.json({ message: "News deleted successfully!" });
+    } catch (error) {
+      return res.status(500).json({
+        status: 500,
+        message: "Something went wrong.Please try again.",
+      });
+    }
+  }
 }
 
 export default NewsController;
