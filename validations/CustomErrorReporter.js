@@ -1,6 +1,6 @@
 import { errors } from '@vinejs/vine'
 
-export class JSONAPIErrorReporter {
+export class CustomErrorReporter {
     /**
      * A flag to know if one or more errors have been
      * reported

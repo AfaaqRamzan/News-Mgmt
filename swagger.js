@@ -1,4 +1,5 @@
 import swaggerAutogen from "swagger-autogen";
+import "dotenv/config";
 
 const doc = {
   info: {
@@ -6,7 +7,7 @@ const doc = {
     description: "API documentation generated automatically by swagger-autogen",
     version: "2.0.0",
   },
-  host: "localhost:3000",
+  host: `localhost:${process.env.PORT || 3000}`,
   securityDefinitions: {
     bearerAuth: {
       type: "apiKey",

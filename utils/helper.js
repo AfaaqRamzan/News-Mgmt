@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { supportedMimes } from "../config/filesystem";
+import { supportedMimes } from "../config/filesystem.js";
 
 export const imageValidator = (size, mime) => {
   if (bytesToMb(size) > 2) {
@@ -17,4 +17,16 @@ export const bytesToMb = (bytes) => {
 
 export const generateRandomNum = () => {
   return uuidv4();
+};
+
+// * Upload image to /public/images
+export const uploadImage = async (image) => {
+  const imgExt = image?.name.split(".");
+  const imageName = generateRandomNum() + "." + imgExt[1];
+  const uploadPath = process.cwd() + "/public/images/" + imageName;
+  image.mv(uploadPath, (err) => {
+    if (err) throw err;
+  });
+
+  return imageName;
 };

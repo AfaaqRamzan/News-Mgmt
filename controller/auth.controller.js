@@ -80,7 +80,6 @@ class AuthController {
         .status(201)
         .json({ message: "User created successfully", newUser });
     } catch (error) {
-      console.log("The error is", error);
       if (error instanceof errors.E_VALIDATION_ERROR) {
         // * 400 Bad Request
         return res.status(400).json({ errors: error.messages });
