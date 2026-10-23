@@ -379,10 +379,20 @@
     },
     "/api/news": {
       "get": {
-        "description": "",
+        "tags": [
+          "News"
+        ],
+        "summary": "Index/Get all news",
+        "description": "Returns the news information of all the news.",
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "News fetched successfully"
+          },
+          "408": {
+            "description": "Request Timeout"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       },
@@ -419,9 +429,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
-          },
           "201": {
             "description": "News created successfully",
             "schema": {

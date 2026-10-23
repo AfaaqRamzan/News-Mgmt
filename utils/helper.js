@@ -19,6 +19,10 @@ export const generateRandomNum = () => {
   return uuidv4();
 };
 
+export const getImageUrl = (imgName) => {
+  return `${process.env.APP_URL}:${process.env.PORT}/images/${imgName}`;
+};
+
 // * Upload image to /public/images
 export const uploadImage = async (image) => {
   const imgExt = image?.name.split(".");

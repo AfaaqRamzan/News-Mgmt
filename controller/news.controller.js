@@ -2,9 +2,41 @@ import vine, { errors } from "@vinejs/vine";
 import { newsSchema } from "../validations/news.validation.js";
 import { imageValidator, uploadImage } from "../utils/helper.js";
 import { prisma } from "../DB/db.config.js";
+import NewsTransform from "../transform/news.transform.js";
 
 class NewsController {
-  static async index(req, res) {}
+  static async index(req, res) {
+    /*  #swagger.tags = ['News']
+            #swagger.summary = 'Index/Get all news'
+            #swagger.description = 'Returns the news information of all the news.'
+            #swagger.responses[200] = {
+                description: 'News fetched successfully',
+            }
+            #swagger.responses[408] = {
+                description: 'Request Timeout'
+            }
+            #swagger.responses[500] = {
+                description: 'Internal server error'
+            }
+    */
+    const news = await prisma.news.findMany({
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            profile: true,
+          },
+        },
+      },
+    });
+    const newsTransform = news?.map((item) => NewsTransform.transform(item));
+
+    return res.status(200).json({
+      news: newsTransform,
+    });
+  }
 
   static async store(req, res) {
     /*  #swagger.tags = ['News']
