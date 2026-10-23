@@ -384,6 +384,18 @@
         ],
         "summary": "Index/Get all news",
         "description": "Returns the news information of all the news.",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "News fetched successfully"
